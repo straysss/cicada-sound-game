@@ -321,12 +321,20 @@
         .cicada-download-button:hover {
             background-color: #c0392b;
         }
-        
-        /* 響應式設計 */
+          /* 響應式設計 */
         @media (max-width: 600px) {
             .cicada-sound-options {
                 grid-template-columns: 1fr;
             }
+        }
+        
+        /* 圖片授權標註 */
+        .image-attribution {
+            font-size: 11px;
+            color: #666;
+            text-align: center;
+            margin-top: 3px;
+            font-style: italic;
         }
     </style>
 </head>
@@ -367,14 +375,14 @@
             <!-- 答題結果反饋將由 JavaScript 動態更新 -->
         </div>
     </div>
-    
-    <!-- 蟬種知識彈窗 -->
+      <!-- 蟬種知識彈窗 -->
     <div id="cicada-modal" class="cicada-modal">
         <div class="cicada-modal-content">
             <span id="cicada-modal-close" class="cicada-modal-close">&times;</span>
             <h2 id="cicada-species-name"></h2>
             <img id="cicada-species-image" class="cicada-species-image" src="" alt="蟬的圖片">
             <p id="cicada-species-description"></p>
+            <p id="cicada-image-attribution" class="image-attribution"></p>
         </div>
     </div>
     
@@ -386,11 +394,11 @@
             <div class="cicada-final-score">
                 <h3>您的分數: <span id="cicada-final-score">0</span> / 50</h3>
                 <p id="cicada-score-comment"></p>
-            </div>
-            <div class="cicada-info-box">                <h3>台灣騷蟬</h3>
+            </div>            <div class="cicada-info-box">                <h3>台灣騷蟬</h3>
                 <img class="cicada-species-image" src="images/taiwan_noisy_cicada.jpg" alt="台灣騷蟬">
                 <p>台灣騷蟬鳴聲急促且具有節奏感，聲調變化豐富，是台灣夏季常見的蟬種，通常棲息在中低海拔地區。牠們身體較小，鳴叫聲具有獨特的頻率變化，能夠迅速辨識。</p>
-            </div>            <div class="cicada-action-buttons">
+                <p id="result-image-attribution" class="image-attribution"></p>
+            </div><div class="cicada-action-buttons">
                 <button id="cicada-restart" class="cicada-button cicada-restart-button">再玩一次</button>
                 <button id="cicada-share" class="cicada-button cicada-share-button">分享結果</button>
             </div>
@@ -410,6 +418,7 @@
                     <p id="cicada-share-comment"></p>
                 </div>                <div class="cicada-share-image">
                     <img src="images/taiwan_noisy_cicada.jpg" alt="台灣騷蟬" style="max-width: 200px;">
+                    <p id="share-image-attribution" class="image-attribution"></p>
                 </div>
                 <div class="cicada-share-date">
                     <p>挑戰日期: <span id="cicada-share-date"></span></p>
@@ -1051,13 +1060,22 @@
             const speciesName = document.getElementById('cicada-species-name');
             const speciesImage = document.getElementById('cicada-species-image');
             const speciesDesc = document.getElementById('cicada-species-description');
-            
-            // 設置彈窗內容
-            speciesName.textContent = cicada.cicadaSpecies;
-            speciesImage.src = cicada.cicadaImage;
-            speciesImage.alt = cicada.cicadaSpecies;
-            speciesDesc.textContent = cicada.cicadaDescription;
-            
+            const attributionElement = document.getElementById('cicada-image-attribution');
+
+        // 設置彈窗內容
+        speciesName.textContent = cicada.cicadaSpecies;
+                speciesImage.src = cicada.cicadaImage;
+                speciesImage.alt = cicada.cicadaSpecies;
+                speciesDesc.textContent = cicada.cicadaDescription;
+
+            // 設置圖片授權標註
+            if (cicada.cicadaImage.includes('red_vein_bear_cicada.jpg')) {
+                attributionElement.textContent = '圖片作者:吳士緯 CC BY-NC 4.0 International';
+            } else if (cicada.cicadaImage.includes('taiwan_noisy_cicada.jpg')) {
+                attributionElement.textContent = '圖片作者:詹凱翔 CC BY-NC 4.0 International';
+            } else {
+                attributionElement.textContent = '';
+            }
             // 顯示彈窗
             modal.style.display = 'flex';
             
@@ -1115,26 +1133,34 @@
             const cicadaInfoTitle = document.querySelector('.cicada-info-box h3');
             const cicadaInfoImage = document.querySelector('.cicada-info-box img');
             const cicadaInfoDesc = document.querySelector('.cicada-info-box p');
-            
+            const resultAttributionElement = document.getElementById('result-image-attribution');
+    
             // 根據最常識別的蟬種設置內容
-            cicadaInfoTitle.textContent = mostIdentifiedCicada;
-              if (mostIdentifiedCicada === "紅脈熊蟬") {
+           cicadaInfoTitle.textContent = mostIdentifiedCicada;
+      
+            if (mostIdentifiedCicada === "紅脈熊蟬") {
                 cicadaInfoImage.src = 'images/red_vein_bear_cicada.jpg';
                 cicadaInfoImage.alt = '紅脈熊蟬';
                 cicadaInfoDesc.textContent = '紅脈熊蟬是台灣常見的蟬種，鳴聲高亢連續，強弱有變化，喜歡在樹冠層活動。';
+                resultAttributionElement.textContent = '圖片作者:吳士緯 CC BY-NC 4.0 International';
             } else if (mostIdentifiedCicada === "台灣熊蟬") {
                 cicadaInfoImage.src = 'images/taiwan_bear_cicada.jpg';
                 cicadaInfoImage.alt = '台灣熊蟬';
                 cicadaInfoDesc.textContent = '台灣熊蟬是台灣體型最大的蟬之一，叫聲非常響亮且持久，通常在夏季的上午或下午鳴叫最為活躍。';
+                resultAttributionElement.textContent = '';
             } else {
                 cicadaInfoImage.src = 'images/taiwan_noisy_cicada.jpg';
                 cicadaInfoImage.alt = '台灣騷蟬';
                 cicadaInfoDesc.textContent = '台灣騷蟬鳴聲急促且具有節奏感，聲調變化豐富，是台灣夏季常見的蟬種，通常棲息在中低海拔地區。牠們身體較小，鳴叫聲具有獨特的頻率變化，能夠迅速辨識。';
+                resultAttributionElement.textContent = '圖片作者:詹凱翔 CC BY-NC 4.0 International';
             }
             
             // 更新分享畫面的蟬種圖片
-            document.querySelector('.cicada-share-image img').src = cicadaInfoImage.src;
-            document.querySelector('.cicada-share-image img').alt = cicadaInfoImage.alt;
+            const shareImg = document.querySelector('.cicada-share-image img');
+            const shareAttributionElement = document.getElementById('share-image-attribution');
+            shareImg.src = cicadaInfoImage.src;
+            shareImg.alt = cicadaInfoImage.alt;
+            shareAttributionElement.textContent = resultAttributionElement.textContent;
             
             // 顯示結算彈窗
             document.getElementById('cicada-result-modal').style.display = 'flex';
